@@ -94,8 +94,10 @@ export function Lookup(): ReactElement {
       setMovies([]);
       setUsers([]);
 
-      setUsername(username);
-      fetchMovies(username);
+      const formattedUsername = formatUsername(username);
+
+      setUsername(formattedUsername || "");
+      fetchMovies(formattedUsername || "");
       setStep(Step.Results);
     },
     [fetchMovies],
@@ -181,4 +183,21 @@ export function Lookup(): ReactElement {
       </div>
     </div>
   );
+}
+
+// If URL is given, extract the last part as the username.
+function formatUsername(username: string): string | undefined {
+  // If username is a URL...
+  if (username.includes("http")) {
+    // Remove trailing slash.
+    if (username.endsWith("/")) {
+      username = username.slice(0, -1);
+    }
+
+    // Extract the last part of the URL.
+    const url = new URL(username);
+    return url.pathname.split("/").pop();
+  }
+
+  return username;
 }
