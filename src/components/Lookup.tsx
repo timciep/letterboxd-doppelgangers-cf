@@ -224,5 +224,5 @@ function formatUsername(username: string): string | undefined {
     return url.pathname.split("/").pop();
   }
 
-  return username;
+  return username.trim();
 }
