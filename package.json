@@ -13,6 +13,7 @@
     "cf-typegen": "wrangler types --env-interface CloudflareEnv env.d.ts"
   },
   "dependencies": {
+    "@next/third-parties": "^15.1.1",
     "cheerio": "^1.0.0",
     "next": "15.1.0",
     "react": "^19.0.0",
