@@ -34,6 +34,7 @@ export function Lookup(): ReactElement {
 
     if (!response.ok) {
       alert(`User not found: ${username}`);
+      setStep(Step.Form);
       return;
     }
 
@@ -90,6 +91,9 @@ export function Lookup(): ReactElement {
     async (username: string) => {
       setLoadingMovies(true);
       setLoadingUsers(true);
+      setMovies([]);
+      setUsers([]);
+
       setUsername(username);
       fetchMovies(username);
       setStep(Step.Results);
@@ -99,9 +103,7 @@ export function Lookup(): ReactElement {
 
   // When movies are loaded, set all movie slugs as selected.
   useEffect(() => {
-    if (movies.length) {
-      setSelectedMovieSlugs(movies.map((movie) => movie.slug));
-    }
+    setSelectedMovieSlugs(movies.map((movie) => movie.slug));
   }, [movies]);
 
   const onMovieSelected = useCallback((slug: string) => {
