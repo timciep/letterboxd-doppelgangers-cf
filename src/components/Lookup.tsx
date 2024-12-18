@@ -137,7 +137,8 @@ export function Lookup(): ReactElement {
               onMovieSelected,
             }}
           />
-          {selectedMovieSlugs.length > 1 ? (
+          {selectedMovieSlugs.length === 4 ? (
+            // exactly 4
             <div className="text-lg">
               ...are also the{" "}
               <span className="text-orange-300 font-bold">
@@ -145,13 +146,32 @@ export function Lookup(): ReactElement {
               </span>{" "}
               favorites of:
             </div>
+          ) : selectedMovieSlugs.length > 1 ? (
+            // more than 1 (plural)
+            <div className="text-lg">
+              ...are also{" "}
+              <span className="text-orange-300 font-bold">
+                {selectedMovieSlugs.length}
+              </span>{" "}
+              of the favorites of:
+            </div>
           ) : (
-            <div className="text-lg">...is also the favorite of:</div>
+            selectedMovieSlugs.length === 1 && (
+              // 1
+              <div className="text-lg">
+                ...is also{" "}
+                <span className="text-orange-300 font-bold">
+                  {selectedMovieSlugs.length}
+                </span>{" "}
+                of the favorites of:
+              </div>
+            )
           )}
         </>
       )}
 
       {!loadingUsers &&
+        selectedMovieSlugs.length > 0 &&
         movies.length > 0 &&
         (users.length > 0 ? (
           <UserSearchResults users={users} />
