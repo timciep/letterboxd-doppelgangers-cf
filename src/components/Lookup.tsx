@@ -4,6 +4,7 @@ import { UserFavoritesList } from "./UserFavoritesList";
 import { LetterboxdFavorite } from "@/lib/getLetterboxdFavorites";
 import { UserSearchResults } from "./UserSearchResults";
 import { UserResult } from "@/lib/getLetterboxdFansByMovies";
+import { sendGAEvent } from "@next/third-parties/google";
 
 enum Step {
   Form,
@@ -95,6 +96,10 @@ export function Lookup(): ReactElement {
       setUsers([]);
 
       const formattedUsername = formatUsername(username);
+
+      sendGAEvent("event", "lookup", {
+        value: formattedUsername,
+      });
 
       setUsername(formattedUsername || "");
       fetchMovies(formattedUsername || "");
