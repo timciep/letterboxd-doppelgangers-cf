@@ -7,7 +7,7 @@ export default function Home() {
     <main>
       <div className="text-center pt-8 pb-10 mx-2">
         <h1 className="text-3xl md:text-4xl font-bol">
-          Letterboxd Doppelgangers
+          Letterboxd Doppelgängers
         </h1>
 
         <p className="text-lg text-shark-200 mt-2">
