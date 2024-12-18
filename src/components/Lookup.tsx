@@ -21,7 +21,7 @@ export function Lookup(): ReactElement {
   const [loadingUsers, setLoadingUsers] = useState<boolean>(false);
 
   const movieSlugsQuery = useMemo(
-    () => selectedMovieSlugs.map((slug) => `fan:${slug}`).join("%20"),
+    () => selectedMovieSlugs.map((slug) => `fan:${slug}`).join("+"),
     [selectedMovieSlugs],
   );
 
@@ -169,7 +169,7 @@ export function Lookup(): ReactElement {
 
         {users.length > 0 && (
           <a
-            href={`https://letterboxd.com/s/search/${movieSlugsQuery}`}
+            href={`https://letterboxd.com/search/${movieSlugsQuery}`}
             target="_blank"
             className="py-1 px-2 rounded bg-apple-900 hover:bg-apple-800 text-apple-100"
           >
