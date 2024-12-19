@@ -5,6 +5,7 @@ import { LetterboxdFavorite } from "@/lib/getLetterboxdFavorites";
 import { UserSearchResults } from "./UserSearchResults";
 import { UserResult } from "@/lib/getLetterboxdFansByMovies";
 import { sendGAEvent } from "@next/third-parties/google";
+import { Spinner } from "./Spinner";
 
 enum Step {
   Form,
@@ -187,6 +188,8 @@ export function Lookup(): ReactElement {
             <div>Try deselecting one or more of your favorites, above.</div>
           </div>
         ))}
+
+      {loadingMovies && <Spinner />}
 
       <div className="flex justify-between w-full mt-5">
         <button
