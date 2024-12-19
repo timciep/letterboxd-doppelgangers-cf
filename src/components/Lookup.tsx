@@ -74,7 +74,9 @@ export function Lookup(): ReactElement {
       let data: UserResult[] = await response.json();
 
       // remove the searched user from the list
-      data = data.filter((user) => user.username !== username);
+      data = data.filter(
+        (user) => user.username.toLowerCase() !== username.toLowerCase(),
+      );
 
       setUsers(data);
       setLoadingUsers(false);
