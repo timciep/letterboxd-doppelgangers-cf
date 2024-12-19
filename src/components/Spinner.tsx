@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 
 export function Spinner(): ReactElement {
   return (
-    <div className="flex justify-center items-center h-64">
+    <div className="flex justify-center items-center">
       <svg
         className="animate-spin h-12 w-12 text-shark-200"
         xmlns="http://www.w3.org/2000/svg"
