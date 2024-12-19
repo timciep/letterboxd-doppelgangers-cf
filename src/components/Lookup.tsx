@@ -189,7 +189,7 @@ export function Lookup(): ReactElement {
           </div>
         ))}
 
-      {loadingMovies && <Spinner />}
+      {(loadingMovies || loadingUsers) && <Spinner />}
 
       <div className="flex justify-between w-full mt-5">
         <button
