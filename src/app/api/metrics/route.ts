@@ -5,6 +5,17 @@ export const runtime = "edge";
 export async function GET() {
   const db = getRequestContext().env.DB_letterboxd_doppelganger_lookups;
 
+  const totals = await db
+    .prepare(
+      `
+      select
+        count(distinct username) as usernames,
+        count(*) as lookups
+      from lookups
+    `,
+    )
+    .all();
+
   const countsByDay = await db
     .prepare(
       `
@@ -37,6 +48,7 @@ export async function GET() {
 
   return new Response(
     JSON.stringify({
+      "Count totals": totals.results,
       "Counts by day": countsByDay.results,
       "Unique usernames, most recent first": uniqueUsernames.results,
     }),
