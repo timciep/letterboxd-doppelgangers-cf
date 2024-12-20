@@ -8,7 +8,9 @@ export async function GET() {
   const usernamesCountByDay = await db
     .prepare(
       `
-      select date(datetime) as date, count(*) as lookups
+      select
+        date(datetime) as date,
+        count(*) as lookups
       from lookups
       group by date
       order by date desc
@@ -19,7 +21,12 @@ export async function GET() {
   const uniqueUsernames = await db
     .prepare(
       `
-      select username, min(datetime) as min_date, max(datetime) as max_date, count(*) as lookups
+      select
+        username,
+        "https://letterboxd.com/" || username as url,
+        min(datetime) as min_date,
+        max(datetime) as max_date,
+        count(*) as lookups
       from lookups
       group by username
       order by min_date desc
