@@ -10,7 +10,12 @@
     "pages:build": "npx @cloudflare/next-on-pages",
     "preview": "npm run pages:build && wrangler pages dev",
     "deploy": "npm run pages:build && wrangler pages deploy",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv env.d.ts"
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv env.d.ts",
+    "migrations_reset": "wrangler d1 execute DB_letterboxd_doppelganger_lookups --command='delete from d1_migrations'",
+    "migrations_apply_local": "npx wrangler d1 migrations apply letterboxd_doppelganger_lookups --local",
+    "migrations_apply_prod": "npx wrangler d1 migrations apply letterboxd_doppelganger_lookups --remote",
+    "list_lookups_local": "wrangler d1 execute DB_letterboxd_doppelganger_lookups --command='select * from lookups' --local",
+    "list_lookups_prod": "wrangler d1 execute DB_letterboxd_doppelganger_lookups --command='select * from lookups' --remote"
   },
   "dependencies": {
     "@next/third-parties": "^15.1.1",

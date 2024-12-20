@@ -2,4 +2,5 @@
 // by running `wrangler types --env-interface CloudflareEnv env.d.ts`
 
 interface CloudflareEnv {
+  DB_letterboxd_doppelganger_lookups: D1Database;
 }

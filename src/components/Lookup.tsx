@@ -30,9 +30,18 @@ export function Lookup(): ReactElement {
   const fetchMovies = useCallback(async (username: string) => {
     setLoadingMovies(true);
 
-    const response = await fetch(
-      `/api/letterboxd_favorites?username=${username}`,
-    );
+    let response;
+
+    try {
+      response = await fetch(`/api/letterboxd_favorites?username=${username}`);
+    } catch (error) {
+      alert(
+        `API error. Perhaps Letterboxd is down or has started blocking these requests.`,
+      );
+      console.error(error);
+      setLoadingMovies(false);
+      return;
+    }
 
     if (!response.ok) {
       alert(`User not found: ${username}`);
@@ -61,9 +70,19 @@ export function Lookup(): ReactElement {
     async (movieSlugs: string[]) => {
       setLoadingUsers(true);
 
-      const response = await fetch(
-        `/api/letterboxd_fans_by_movies?movies=${movieSlugs.join(",")}`,
-      );
+      let response;
+      try {
+        response = await fetch(
+          `/api/letterboxd_fans_by_movies?movies=${movieSlugs.join(",")}&username=${username}`,
+        );
+      } catch (error) {
+        alert(
+          `API error. Perhaps Letterboxd is down or has started blocking these requests.`,
+        );
+        console.error(error);
+        setLoadingUsers(false);
+        return;
+      }
 
       if (!response.ok) {
         throw new Error(
