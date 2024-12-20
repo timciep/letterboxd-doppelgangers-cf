@@ -22,9 +22,10 @@ export async function GET(request: NextRequest) {
   try {
     const db = getRequestContext().env.DB_letterboxd_doppelganger_lookups;
 
-    db.prepare(
-      "INSERT INTO lookups (username, favorites, matches, datetime) VALUES (?, ?, ?, ?)",
-    )
+    await db
+      .prepare(
+        "INSERT INTO lookups (username, favorites, matches, datetime) VALUES (?, ?, ?, ?)",
+      )
       .bind(
         username,
         movieSlugs.length,
