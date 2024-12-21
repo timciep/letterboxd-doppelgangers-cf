@@ -24,6 +24,7 @@ export async function GET() {
         count(distinct username) as usernames,
         count(*) as lookups
       from lookups
+      where datetime > date('now', '-30 days')
       group by date
       order by date desc
     `,
@@ -40,6 +41,7 @@ export async function GET() {
         max(datetime) as max_date,
         count(*) as lookups
       from lookups
+      where datetime > date('now', '-30 days')
       group by username
       order by min_date desc
     `,
@@ -48,8 +50,8 @@ export async function GET() {
 
   return new Response(
     JSON.stringify({
-      "Count totals": totals.results,
-      "Counts by day": countsByDay.results,
+      "Count totals": totals.results[0],
+      "Counts by day (last 30)": countsByDay.results,
       "Unique usernames, most recent first": uniqueUsernames.results,
     }),
     {
