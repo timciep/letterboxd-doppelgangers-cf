@@ -8,7 +8,7 @@ export async function GET() {
   const matches = await db
     .prepare(
       `
-      select username, min(datetime) as date
+      select username, matches, min(datetime) as date
       from lookups
       where favorites = 4 and matches > 0
       group by username
