@@ -2,6 +2,8 @@
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`c3`](https://developers.cloudflare.com/pages/get-started/c3).
 
+![image](https://github.com/user-attachments/assets/69779fe7-29c7-469b-857e-5a64902dd762)
+
 ## Getting Started
 
 First, run the development server:
