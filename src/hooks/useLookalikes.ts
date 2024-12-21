@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { UserResult } from "@/lib/getLetterboxdFansByMovies";
 
 export const useLookalikes = ({
@@ -14,9 +14,19 @@ export const useLookalikes = ({
   const [users, setUsers] = useState<UserResult[]>([]);
   const [loadingUsers, setLoadingUsers] = useState<boolean>(false);
 
+  const fetchCache = useMemo(() => new Map<string, UserResult[]>(), []);
+
   const fetchUsers = useCallback(
     async (movieSlugs: string[]) => {
       setLoadingUsers(true);
+
+      // If we've already fetched these users, don't do it again.
+      const cacheKey = movieSlugs.sort().join(",");
+      if (fetchCache.has(cacheKey)) {
+        setUsers(fetchCache.get(cacheKey)!);
+        setLoadingUsers(false);
+        return;
+      }
 
       let response;
       try {
@@ -45,10 +55,13 @@ export const useLookalikes = ({
         (user) => user.username.toLowerCase() !== username.toLowerCase(),
       );
 
+      // add to cache
+      fetchCache.set(cacheKey, data);
+
       setUsers(data);
       setLoadingUsers(false);
     },
-    [username],
+    [fetchCache, username],
   );
 
   // When selected movie slugs change, fetch fans for those movies.
