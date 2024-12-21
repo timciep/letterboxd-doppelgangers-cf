@@ -2,19 +2,19 @@ import { useState, useCallback, useEffect } from "react";
 import { UserResult } from "@/lib/getLetterboxdFansByMovies";
 
 export const useLookalikes = ({
-    username,
-    selectedMovieSlugs,
+  username,
+  selectedMovieSlugs,
 }: {
-    username: string;
-    selectedMovieSlugs: string[];
+  username: string;
+  selectedMovieSlugs: string[];
 }): {
-    users: UserResult[];
-    loadingUsers: boolean;
+  users: UserResult[];
+  loadingUsers: boolean;
 } => {
-    const [users, setUsers] = useState<UserResult[]>([]);
-    const [loadingUsers, setLoadingUsers] = useState<boolean>(false);
+  const [users, setUsers] = useState<UserResult[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState<boolean>(false);
 
-    const fetchUsers = useCallback(
+  const fetchUsers = useCallback(
     async (movieSlugs: string[]) => {
       setLoadingUsers(true);
 
@@ -58,5 +58,5 @@ export const useLookalikes = ({
     }
   }, [selectedMovieSlugs, fetchUsers]);
 
-    return { users, loadingUsers };
-}
+  return { users, loadingUsers };
+};

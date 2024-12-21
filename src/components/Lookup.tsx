@@ -16,9 +16,9 @@ export function Lookup(): ReactElement {
   const [step, setStep] = useState<Step>(Step.Form);
 
   const [username, setUsername] = useState<string>("");
-  
+
   const [selectedMovieSlugs, setSelectedMovieSlugs] = useState<string[]>([]);
-  
+
   const movieSlugsQuery = useMemo(
     () => selectedMovieSlugs.map((slug) => `fan:${slug}`).join("+"),
     [selectedMovieSlugs],
@@ -29,11 +29,7 @@ export function Lookup(): ReactElement {
     setStep(Step.Form);
   }, []);
 
-  const {
-    movies,
-    loadingMovies,
-    fetchMovies,
-  } = useUsersFavorites({ onError });
+  const { movies, loadingMovies, fetchMovies } = useUsersFavorites({ onError });
 
   const onSubmit = useCallback(
     async (username: string) => {
@@ -67,7 +63,7 @@ export function Lookup(): ReactElement {
     });
   }, []);
 
-  const { users, loadingUsers} = useLookalikes({
+  const { users, loadingUsers } = useLookalikes({
     username,
     selectedMovieSlugs,
   });
