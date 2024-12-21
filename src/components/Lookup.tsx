@@ -1,13 +1,13 @@
 import { ReactElement, useState, useCallback, useEffect, useMemo } from "react";
 import { UsernameInput } from "./UsernameInput";
 import { UserFavoritesList } from "./UserFavoritesList";
-import { LetterboxdFavorite } from "@/lib/getLetterboxdFavorites";
 import { UserSearchResults } from "./UserSearchResults";
-import { UserResult } from "@/lib/getLetterboxdFansByMovies";
 import { sendGAEvent } from "@next/third-parties/google";
 import { Spinner } from "./Spinner";
+import { useLookalikes } from "@/hooks/useLookalikes";
+import { useUsersFavorites } from "@/hooks/useUsersFavorites";
 
-enum Step {
+export enum Step {
   Form,
   Results,
 }
@@ -16,107 +16,27 @@ export function Lookup(): ReactElement {
   const [step, setStep] = useState<Step>(Step.Form);
 
   const [username, setUsername] = useState<string>("");
-  const [movies, setMovies] = useState<LetterboxdFavorite[]>([]);
-  const [loadingMovies, setLoadingMovies] = useState<boolean>(false);
+  
   const [selectedMovieSlugs, setSelectedMovieSlugs] = useState<string[]>([]);
-  const [users, setUsers] = useState<UserResult[]>([]);
-  const [loadingUsers, setLoadingUsers] = useState<boolean>(false);
-
+  
   const movieSlugsQuery = useMemo(
     () => selectedMovieSlugs.map((slug) => `fan:${slug}`).join("+"),
     [selectedMovieSlugs],
   );
 
-  const fetchMovies = useCallback(async (username: string) => {
-    setLoadingMovies(true);
-
-    let response;
-
-    try {
-      response = await fetch(`/api/letterboxd_favorites?username=${username}`);
-    } catch (error) {
-      alert(
-        `API error. Perhaps Letterboxd is down or has started blocking these requests.`,
-      );
-      console.error(error);
-      setLoadingMovies(false);
-      return;
-    }
-
-    if (!response.ok) {
-      alert(`User not found: ${username}`);
-      setStep(Step.Form);
-      return;
-    }
-
-    let data: LetterboxdFavorite[] = await response.json();
-
-    // remove duplicates
-    data = data.filter(
-      (movie, index, self) =>
-        index === self.findIndex((m) => m.slug === movie.slug),
-    );
-
-    if (!data || !data.length) {
-      alert(`Favorites not found for ${username}`);
-      return;
-    }
-
-    setMovies(data);
-    setLoadingMovies(false);
+  const onError = useCallback((errorString: string) => {
+    alert(errorString);
+    setStep(Step.Form);
   }, []);
 
-  const fetchUsers = useCallback(
-    async (movieSlugs: string[]) => {
-      setLoadingUsers(true);
-
-      let response;
-      try {
-        response = await fetch(
-          `/api/letterboxd_fans_by_movies?movies=${movieSlugs.join(",")}&username=${username}`,
-        );
-      } catch (error) {
-        alert(
-          `API error. Perhaps Letterboxd is down or has started blocking these requests.`,
-        );
-        console.error(error);
-        setLoadingUsers(false);
-        return;
-      }
-
-      if (!response.ok) {
-        throw new Error(
-          `Failed to fetch fans: ${response.status} ${response.statusText}`,
-        );
-      }
-
-      let data: UserResult[] = await response.json();
-
-      // remove the searched user from the list
-      data = data.filter(
-        (user) => user.username.toLowerCase() !== username.toLowerCase(),
-      );
-
-      setUsers(data);
-      setLoadingUsers(false);
-    },
-    [username],
-  );
-
-  // When selected movie slugs change, fetch fans for those movies.
-  useEffect(() => {
-    if (selectedMovieSlugs.length) {
-      fetchUsers(selectedMovieSlugs);
-    }
-  }, [selectedMovieSlugs, fetchUsers]);
+  const {
+    movies,
+    loadingMovies,
+    fetchMovies,
+  } = useUsersFavorites({ onError });
 
   const onSubmit = useCallback(
     async (username: string) => {
-      setLoadingMovies(true);
-      setLoadingUsers(true);
-      setMovies([]);
-      setUsers([]);
-
       const formattedUsername = formatUsername(username);
 
       sendGAEvent("event", "lookup", {
@@ -146,6 +66,11 @@ export function Lookup(): ReactElement {
       return [...prevSelectedMovieSlugs, slug];
     });
   }, []);
+
+  const { users, loadingUsers} = useLookalikes({
+    username,
+    selectedMovieSlugs,
+  });
 
   if (step === Step.Form) {
     return <UsernameInput {...{ onSubmit }} />;
@@ -235,7 +160,7 @@ export function Lookup(): ReactElement {
 }
 
 // If URL is given, extract the last part as the username.
-function formatUsername(username: string): string | undefined {
+export function formatUsername(username: string): string | undefined {
   // If username is a URL...
   if (username.includes("http")) {
     // Remove trailing slash.
