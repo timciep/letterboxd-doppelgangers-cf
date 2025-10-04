@@ -41,7 +41,7 @@ export async function GET() {
         max(datetime) as max_date,
         count(*) as lookups
       from lookups
-      where datetime > date('now', '-30 days')
+      -- where datetime > date('now', '-30 days')
       group by username
       order by min_date desc
     `,
