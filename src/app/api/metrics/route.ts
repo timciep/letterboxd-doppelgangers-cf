@@ -43,7 +43,7 @@ export async function GET() {
       from lookups
       -- where datetime > date('now', '-30 days')
       group by username
-      order by min_date desc
+      order by max_date desc
     `,
     )
     .all();
