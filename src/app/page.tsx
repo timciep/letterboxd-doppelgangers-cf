@@ -25,6 +25,21 @@ export default function Home() {
         }}
       ></div>
 
+      {/* Broken App Banner */}
+      <div className="bg-red-800 text-white text-center py-3 px-4">
+        <div className="max-w-4xl mx-auto">
+          <p className="font-semibold text-lg">
+            ⚠️ Due to Letterboxd changes, this app is currently broken ⚠️
+          </p>
+          <p className="text-sm mt-1">
+            I will try to fix it this weekend. Please check back!
+          </p>
+          <p className="text-sm mt-1">
+            - Tim (2025-10-16)
+          </p>
+        </div>
+      </div>
+
       <div
         style={{
           minHeight: "60vh",
