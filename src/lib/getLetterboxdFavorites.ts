@@ -26,7 +26,7 @@ export async function getLetterboxdFavorites(
   }
 
   // Select the list items containing favorites
-  const favoritesLis = favoritesSection.find("ul > li");
+  const favoritesLis = favoritesSection.find("ul.poster-list > li.posteritem");
   if (!favoritesLis.length) {
     throw new Error("No favorites found");
   }
@@ -34,12 +34,12 @@ export async function getLetterboxdFavorites(
   // Extract favorites data
   const favorites = favoritesLis
     .map((_i, li): LetterboxdFavorite | null => {
-      const filmDiv = $(li).find('[data-type="film"]');
-      const imgDiv = filmDiv.find("img");
+      const reactComponent = $(li).find('.react-component[data-component-class="LazyPoster"]');
 
-      const slug = filmDiv.attr("data-film-slug") || "";
-      const title = imgDiv.attr("alt") || null;
-      const url = slug ? `https://letterboxd.com/${slug}` : null;
+      const title = reactComponent.attr("data-item-name") || null;
+      const slug = reactComponent.attr("data-item-slug") || "";
+      const itemLink = reactComponent.attr("data-item-link") || "";
+      const url = itemLink ? `https://letterboxd.com${itemLink}` : null;
 
       return { title, slug, url };
     })
