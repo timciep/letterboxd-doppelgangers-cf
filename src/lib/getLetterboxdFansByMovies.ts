@@ -1,4 +1,5 @@
 import * as cheerio from "cheerio";
+import { fetchPageHtml } from "./fetchPageHtml";
 
 export type UserResult = {
   username: string;
@@ -13,7 +14,7 @@ export async function getLetterboxdFansByMovies(
   const movieSlugsQuery = movieSlugs.map((slug) => `fan:${slug}`).join("%20");
 
   // Fetch the page HTML
-  const response = await fetch(
+  const response = await fetchPageHtml(
     `https://letterboxd.com/s/search/${movieSlugsQuery}`,
   );
   if (!response.ok) {

@@ -1,4 +1,5 @@
 import * as cheerio from "cheerio";
+import { fetchPageHtml } from "./fetchPageHtml";
 
 export type LetterboxdFavorite = {
   title: string | null;
@@ -11,7 +12,9 @@ export async function getLetterboxdFavorites(
   username: string,
 ): Promise<LetterboxdFavorite[] | null> {
   // Fetch the page HTML
-  const response = await fetch(`https://letterboxd.com/${username}`);
+  const response = await fetchPageHtml(
+    `https://letterboxd.com/${username}`,
+  );
   if (!response.ok) {
     return null;
   }
@@ -26,7 +29,7 @@ export async function getLetterboxdFavorites(
   }
 
   // Select the list items containing favorites
-  const favoritesLis = favoritesSection.find("ul.poster-list > li.posteritem");
+  const favoritesLis = favoritesSection.find("ul.grid > li.griditem");
   if (!favoritesLis.length) {
     throw new Error("No favorites found");
   }
