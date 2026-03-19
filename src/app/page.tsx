@@ -26,19 +26,16 @@ export default function Home() {
       ></div>
 
       {/* Broken App Banner */}
-      {/* <div className="bg-red-800 text-white text-center py-3 px-4">
+      <div className="bg-red-800 text-white text-center py-3 px-4">
         <div className="max-w-4xl mx-auto">
           <p className="font-semibold text-lg">
-            ⚠️ Due to Letterboxd changes, this app is currently broken ⚠️
+            ⚠️ Unfortunately, Letterboxd is now blocking this app. Looks like it might be game over. ⚠️
           </p>
           <p className="text-sm mt-1">
-            I will try to fix it this weekend. Please check back!
-          </p>
-          <p className="text-sm mt-1">
-            - Tim (2026-02-27)
+            - Tim (2026-03-19)
           </p>
         </div>
-      </div> */}
+      </div>
 
       <div
         style={{
