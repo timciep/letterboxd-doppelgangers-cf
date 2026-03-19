@@ -13,17 +13,19 @@ export async function GET(request: NextRequest) {
     return new Response("No username provided", { status: 400 });
   }
 
-  const res = await getLetterboxdFavorites(username);
+  try {
+    const res = await getLetterboxdFavorites(username);
 
-  if (!res) {
-    return new Response("User favorites not found", { status: 404 });
+    return new Response(JSON.stringify(res), {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return new Response(`${error}`, { status: 500 });
   }
 
-  return new Response(JSON.stringify(res), {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
 }
 
 // If URL is given, extract the last part as the username.

@@ -35,7 +35,10 @@ export const useUsersFavorites = ({
       }
 
       if (!response.ok) {
-        onError(`User not found: ${username}`);
+        const responseText = await response.text();
+
+        onError(`User not found: ${username}. ${response.statusText}. ${responseText}`);
+        setLoadingMovies(false);
         return;
       }
 
@@ -48,7 +51,7 @@ export const useUsersFavorites = ({
       );
 
       if (!data || !data.length) {
-        alert(`Favorites not found for ${username}`);
+        onError(`Favorites not found for ${username}. ${response.statusText}`);
         return;
       }
 

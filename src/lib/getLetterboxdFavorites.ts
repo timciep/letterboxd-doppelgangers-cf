@@ -10,13 +10,15 @@ export type LetterboxdFavorite = {
 
 export async function getLetterboxdFavorites(
   username: string,
-): Promise<LetterboxdFavorite[] | null> {
+): Promise<LetterboxdFavorite[]> {
   // Fetch the page HTML
   const response = await fetchPageHtml(
     `https://letterboxd.com/${username}`,
   );
   if (!response.ok) {
-    return null;
+    console.error(`Failed to fetch favorites: ${response.status} ${response.statusText}`);
+
+    throw new Error(`Failed to fetch favorites: ${response.status} ${response.statusText}`);
   }
 
   const html = await response.text();
