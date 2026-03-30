@@ -42,7 +42,7 @@ export default function Home() {
         <div className="bg-red-800 text-white text-center py-3 px-4">
           <div className="max-w-4xl mx-auto">
             <p className="font-semibold text-lg">
-              ⚠️ Unfortunately, Letterboxd seems to currently be blocking this app.⚠️
+              ⚠️ Unfortunately, Letterboxd seems to currently be blocking this app. ⚠️
             </p>
             <p className="text-sm mt-1">
               Down since {new Date(downSince).toLocaleDateString()} — Tim
