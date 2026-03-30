@@ -2,8 +2,21 @@
 
 import { Lookup } from "@/components/Lookup";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [downSince, setDownSince] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/status")
+      .then((r) => r.json())
+      .then((data) => {
+        const { downSince } = data as { up: boolean; downSince: string | null };
+        setDownSince(downSince);
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <>
       <div
@@ -25,17 +38,18 @@ export default function Home() {
         }}
       ></div>
 
-      {/* Broken App Banner */}
-      {/* <div className="bg-red-800 text-white text-center py-3 px-4">
-        <div className="max-w-4xl mx-auto">
-          <p className="font-semibold text-lg">
-            ⚠️ Unfortunately, Letterboxd is now blocking this app. Looks like it might be game over. ⚠️
-          </p>
-          <p className="text-sm mt-1">
-            - Tim (2026-03-19)
-          </p>
+      {downSince && (
+        <div className="bg-red-800 text-white text-center py-3 px-4">
+          <div className="max-w-4xl mx-auto">
+            <p className="font-semibold text-lg">
+              ⚠️ Unfortunately, Letterboxd seems to currently be blocking this app.⚠️
+            </p>
+            <p className="text-sm mt-1">
+              Down since {new Date(downSince).toLocaleDateString()} — Tim
+            </p>
+          </div>
         </div>
-      </div> */}
+      )}
 
       <div
         style={{

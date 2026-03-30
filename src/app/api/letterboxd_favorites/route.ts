@@ -1,5 +1,6 @@
 import { type NextRequest } from "next/server";
 import { getLetterboxdFavorites } from "@/lib/getLetterboxdFavorites";
+import { getRequestContext } from "@cloudflare/next-on-pages";
 
 export const runtime = "edge";
 
@@ -16,6 +17,8 @@ export async function GET(request: NextRequest) {
   try {
     const res = await getLetterboxdFavorites(username);
 
+    getRequestContext().env.KV_status.put("up", new Date().toISOString());
+
     return new Response(JSON.stringify(res), {
       headers: {
         "Content-Type": "application/json",
@@ -23,9 +26,15 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error(error);
-    return new Response(`${error}`, { status: 500 });
-  }
 
+    const message = `${error}`;
+    const is404 = message.includes("404");
+    if (!is404) {
+      getRequestContext().env.KV_status.put("down", new Date().toISOString());
+    }
+
+    return new Response(message, { status: 500 });
+  }
 }
 
 // If URL is given, extract the last part as the username.

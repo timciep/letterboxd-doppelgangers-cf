@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
 
   const username = searchParams.get("username");
+  const notrack = searchParams.has("notrack");
   const movieStrings = searchParams.get("movies") || "";
 
   const movieSlugs = movieStrings.split(",");
@@ -19,7 +20,7 @@ export async function GET(request: NextRequest) {
 
   const res = await getLetterboxdFansByMovies(movieSlugs);
 
-  try {
+  if (!notrack) try {
     const db = getRequestContext().env.DB_letterboxd_doppelganger_lookups;
 
     await db

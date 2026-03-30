@@ -3,4 +3,5 @@
 
 interface CloudflareEnv {
   DB_letterboxd_doppelganger_lookups: D1Database;
+  KV_status: KVNamespace;
 }
