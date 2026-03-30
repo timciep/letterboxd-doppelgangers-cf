@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
   try {
     const res = await getLetterboxdFavorites(username);
 
-    getRequestContext().env.KV_status.put("up", new Date().toISOString());
+    await getRequestContext().env.KV_status.put("up", new Date().toISOString());
 
     return new Response(JSON.stringify(res), {
       headers: {
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     const message = `${error}`;
     const is404 = message.includes("404");
     if (!is404) {
-      getRequestContext().env.KV_status.put("down", new Date().toISOString());
+      await getRequestContext().env.KV_status.put("down", new Date().toISOString());
     }
 
     return new Response(message, { status: 500 });
