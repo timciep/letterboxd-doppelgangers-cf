@@ -8,6 +8,13 @@ export type LetterboxdFavorite = {
   //   posterImgUrl: string | null;
 };
 
+export class UserNotFoundError extends Error {
+  constructor(username: string) {
+    super(`User not found: ${username}`);
+    this.name = "UserNotFoundError";
+  }
+}
+
 export async function getLetterboxdFavorites(
   username: string,
 ): Promise<LetterboxdFavorite[]> {
@@ -15,25 +22,36 @@ export async function getLetterboxdFavorites(
   const response = await fetchPageHtml(
     `https://letterboxd.com/${username}`,
   );
+
+  const html = await response.text();
+  const $ = cheerio.load(html);
+
+  // Confirm the response actually came from Letterboxd before trusting the status code,
+  // so a CF challenge with any status (incl. 404) is treated as breakage, not a missing user.
+  // Use <title> rather than og:site_name because Letterboxd's own 404 page omits og tags.
+  const title = $("title").text();
+  if (!title.toLowerCase().includes("letterboxd")) {
+    throw new Error(`Response does not appear to be from Letterboxd (status ${response.status}, title "${title}")`);
+  }
+
+  if (response.status === 404) {
+    throw new UserNotFoundError(username);
+  }
   if (!response.ok) {
     console.error(`Failed to fetch favorites: ${response.status} ${response.statusText}`);
 
     throw new Error(`Failed to fetch favorites: ${response.status} ${response.statusText}`);
   }
 
-  const html = await response.text();
-  const $ = cheerio.load(html);
-
-  // Locate the favorites section
+  // Empty/private profiles legitimately lack a favorites section — not a scrape failure.
   const favoritesSection = $("#favourites");
   if (!favoritesSection.length) {
-    throw new Error("No favorites section found");
+    return [];
   }
 
-  // Select the list items containing favorites
   const favoritesLis = favoritesSection.find("ul.grid > li.griditem");
   if (!favoritesLis.length) {
-    throw new Error("No favorites found");
+    return [];
   }
 
   // Extract favorites data

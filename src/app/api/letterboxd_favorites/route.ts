@@ -1,5 +1,5 @@
 import { type NextRequest } from "next/server";
-import { getLetterboxdFavorites } from "@/lib/getLetterboxdFavorites";
+import { getLetterboxdFavorites, UserNotFoundError } from "@/lib/getLetterboxdFavorites";
 import { getRequestContext } from "@cloudflare/next-on-pages";
 
 export const runtime = "edge";
@@ -27,13 +27,13 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error(error);
 
-    const message = `${error}`;
-    const is404 = message.includes("404");
-    if (!is404) {
-      await getRequestContext().env.KV_status.put("down", new Date().toISOString());
+    if (error instanceof UserNotFoundError) {
+      return new Response(`${error}`, { status: 404 });
     }
 
-    return new Response(message, { status: 500 });
+    await getRequestContext().env.KV_status.put("down", new Date().toISOString());
+
+    return new Response(`${error}`, { status: 500 });
   }
 }
 
