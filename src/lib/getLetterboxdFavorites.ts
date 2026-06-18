@@ -18,9 +18,12 @@ export class UserNotFoundError extends Error {
 export async function getLetterboxdFavorites(
   username: string,
 ): Promise<LetterboxdFavorite[]> {
-  // Fetch the page HTML
+  // Fetch the page HTML. The trailing slash is required: Letterboxd 301-redirects
+  // the slash-less URL to the canonical `/username/`, and Cloudflare's bot protection
+  // serves a "Just a moment..." challenge (403) on that redirecting request. Requesting
+  // the canonical URL directly avoids the redirect and returns 200.
   const response = await fetchPageHtml(
-    `https://letterboxd.com/${username}`,
+    `https://letterboxd.com/${username}/`,
   );
 
   const html = await response.text();
