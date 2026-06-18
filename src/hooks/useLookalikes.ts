@@ -43,9 +43,14 @@ export const useLookalikes = ({
       }
 
       if (!response.ok) {
-        throw new Error(
+        alert(
+          `API error. Perhaps Letterboxd is down or has started blocking these requests.`,
+        );
+        console.error(
           `Failed to fetch fans: ${response.status} ${response.statusText}`,
         );
+        setLoadingUsers(false);
+        return;
       }
 
       let data: UserResult[] = await response.json();

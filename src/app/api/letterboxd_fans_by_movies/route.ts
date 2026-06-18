@@ -12,13 +12,27 @@ export async function GET(request: NextRequest) {
   const notrack = searchParams.has("notrack");
   const movieStrings = searchParams.get("movies") || "";
 
-  const movieSlugs = movieStrings.split(",");
+  const movieSlugs = movieStrings.split(",").filter(Boolean);
 
-  if (!movieSlugs) {
+  if (!movieSlugs.length) {
     return new Response("No movies provided", { status: 400 });
   }
 
-  const res = await getLetterboxdFansByMovies(movieSlugs);
+  let res;
+  try {
+    res = await getLetterboxdFansByMovies(movieSlugs);
+
+    await getRequestContext().env.KV_status.put("up", new Date().toISOString());
+  } catch (error) {
+    console.error(error);
+
+    await getRequestContext().env.KV_status.put(
+      "down",
+      new Date().toISOString(),
+    );
+
+    return new Response(`${error}`, { status: 500 });
+  }
 
   if (!notrack) try {
     const db = getRequestContext().env.DB_letterboxd_doppelganger_lookups;
