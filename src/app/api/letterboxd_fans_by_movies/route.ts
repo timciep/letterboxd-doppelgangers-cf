@@ -1,6 +1,7 @@
 import { type NextRequest } from "next/server";
 import { getLetterboxdFansByMovies } from "@/lib/getLetterboxdFansByMovies";
 import { getRequestContext } from "@cloudflare/next-on-pages";
+import { markDown, markUp } from "@/lib/status";
 
 export const runtime = "edge";
 
@@ -22,14 +23,11 @@ export async function GET(request: NextRequest) {
   try {
     res = await getLetterboxdFansByMovies(movieSlugs);
 
-    await getRequestContext().env.KV_status.put("up", new Date().toISOString());
+    await markUp(getRequestContext().env.KV_status);
   } catch (error) {
     console.error(error);
 
-    await getRequestContext().env.KV_status.put(
-      "down",
-      new Date().toISOString(),
-    );
+    await markDown(getRequestContext().env.KV_status);
 
     return new Response(`${error}`, { status: 500 });
   }

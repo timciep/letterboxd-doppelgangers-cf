@@ -1,6 +1,7 @@
 import { type NextRequest } from "next/server";
 import { getLetterboxdFavorites, UserNotFoundError } from "@/lib/getLetterboxdFavorites";
 import { getRequestContext } from "@cloudflare/next-on-pages";
+import { markDown, markUp } from "@/lib/status";
 
 export const runtime = "edge";
 
@@ -17,7 +18,7 @@ export async function GET(request: NextRequest) {
   try {
     const res = await getLetterboxdFavorites(username);
 
-    await getRequestContext().env.KV_status.put("up", new Date().toISOString());
+    await markUp(getRequestContext().env.KV_status);
 
     return new Response(JSON.stringify(res), {
       headers: {
@@ -31,7 +32,7 @@ export async function GET(request: NextRequest) {
       return new Response(`${error}`, { status: 404 });
     }
 
-    await getRequestContext().env.KV_status.put("down", new Date().toISOString());
+    await markDown(getRequestContext().env.KV_status);
 
     return new Response(`${error}`, { status: 500 });
   }

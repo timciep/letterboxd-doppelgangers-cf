@@ -45,7 +45,7 @@ export default function Home() {
               ⚠️ The app is currently having trouble fetching data from Letterboxd. ⚠️
             </p>
             <p className="text-sm mt-1">
-              Issues since {new Date(downSince).toLocaleDateString()}<br/>- Tim
+              Issues since {downSince.slice(0, 10)}<br/>- Tim
             </p>
           </div>
         </div>
