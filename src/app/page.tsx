@@ -2,20 +2,20 @@
 
 import { Lookup } from "@/components/Lookup";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [downSince, setDownSince] = useState<string | null>(null);
+  // const [downSince, setDownSince] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetch("/api/status")
-      .then((r) => r.json())
-      .then((data) => {
-        const { downSince } = data as { up: boolean; downSince: string | null };
-        setDownSince(downSince);
-      })
-      .catch(() => {});
-  }, []);
+  // useEffect(() => {
+  //   fetch("/api/status")
+  //     .then((r) => r.json())
+  //     .then((data) => {
+  //       const { downSince } = data as { up: boolean; downSince: string | null };
+  //       setDownSince(downSince);
+  //     })
+  //     .catch(() => {});
+  // }, []);
 
   return (
     <>
@@ -38,18 +38,19 @@ export default function Home() {
         }}
       ></div>
 
-      {downSince && (
-        <div className="bg-red-800 text-white text-center py-3 px-4">
-          <div className="max-w-4xl mx-auto">
-            <p className="font-semibold text-lg">
-              ⚠️ The app is currently having trouble fetching data from Letterboxd. ⚠️
-            </p>
-            <p className="text-sm mt-1">
-              Issues since {downSince.slice(0, 10)}<br/>- Tim
-            </p>
-          </div>
+      {/* {downSince && ( */}
+      <div className="bg-red-800 text-white text-center py-3 px-4">
+        <div className="max-w-4xl mx-auto">
+          <p className="font-semibold text-lg">
+            ⚠️ The app is currently having trouble fetching data from Letterboxd. ⚠️
+          </p>
+          <p className="text-sm mt-1">
+            {/* Issues since {downSince.slice(0, 10)}<br/>- Tim */}
+            Issues since 2026-06-18<br/>- Tim
+          </p>
         </div>
-      )}
+      </div>
+      {/* )} */}
 
       <div
         style={{
