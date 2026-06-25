@@ -20,18 +20,21 @@ export async function GET(request: NextRequest) {
   }
 
   let res;
+  let error;
   try {
     res = await getLetterboxdFansByMovies(movieSlugs);
 
     await markUp(getRequestContext().env.KV_status);
-  } catch (error) {
-    console.error(error);
+  } catch (e) {
+    console.error(e);
+
+    error = e;
 
     await markDown(getRequestContext().env.KV_status);
-
-    return new Response(`${error}`, { status: 500 });
   }
 
+  // Record the lookup either way. On failure we write -1 matches so usage is
+  // still tracked even when Letterboxd is blocking the search.
   if (!notrack) try {
     const db = getRequestContext().env.DB_letterboxd_doppelganger_lookups;
 
@@ -42,12 +45,16 @@ export async function GET(request: NextRequest) {
       .bind(
         username,
         movieSlugs.length,
-        res.length - 1,
+        res ? res.length - 1 : -1,
         new Date().toISOString(),
       )
       .run();
-  } catch (error) {
-    console.error(error);
+  } catch (e) {
+    console.error(e);
+  }
+
+  if (error) {
+    return new Response(`${error}`, { status: 500 });
   }
 
   return new Response(JSON.stringify(res), {

@@ -12,6 +12,7 @@ export async function GET() {
         count(distinct username) as usernames,
         count(*) as lookups
       from lookups
+      where matches >= 0
     `,
     )
     .all();
@@ -24,7 +25,8 @@ export async function GET() {
         count(distinct username) as usernames,
         count(*) as lookups
       from lookups
-      where datetime > date('now', '-30 days')
+      where matches >= 0
+        and datetime > date('now', '-30 days')
       group by date
       order by date desc
     `,
@@ -41,7 +43,8 @@ export async function GET() {
         max(datetime) as max_date,
         count(*) as lookups
       from lookups
-      -- where datetime > date('now', '-30 days')
+      where matches >= 0
+      -- and datetime > date('now', '-30 days')
       group by username
       order by max_date desc
     `,
