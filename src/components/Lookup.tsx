@@ -63,7 +63,7 @@ export function Lookup(): ReactElement {
     });
   }, []);
 
-  const { users, loadingUsers } = useLookalikes({
+  const { users, loadingUsers, blocked } = useLookalikes({
     username,
     selectedMovieSlugs,
   });
@@ -85,43 +85,64 @@ export function Lookup(): ReactElement {
               onMovieSelected,
             }}
           />
-          {selectedMovieSlugs.length === 4 ? (
-            // exactly 4
-            <div className="text-lg">
-              ...are also the{" "}
-              <span className="text-orange-300 font-bold">
-                {selectedMovieSlugs.length}
-              </span>{" "}
-              favorites of:
-            </div>
-          ) : selectedMovieSlugs.length > 1 ? (
-            // more than 1 (plural)
-            <div className="text-lg">
-              ...are also{" "}
-              <span className="text-orange-300 font-bold">
-                {selectedMovieSlugs.length}
-              </span>{" "}
-              of the favorites of:
-            </div>
-          ) : (
-            selectedMovieSlugs.length === 1 && (
-              // 1
+          {!blocked &&
+            (selectedMovieSlugs.length === 4 ? (
+              // exactly 4
               <div className="text-lg">
-                ...is also{" "}
+                ...are also the{" "}
+                <span className="text-orange-300 font-bold">
+                  {selectedMovieSlugs.length}
+                </span>{" "}
+                favorites of:
+              </div>
+            ) : selectedMovieSlugs.length > 1 ? (
+              // more than 1 (plural)
+              <div className="text-lg">
+                ...are also{" "}
                 <span className="text-orange-300 font-bold">
                   {selectedMovieSlugs.length}
                 </span>{" "}
                 of the favorites of:
               </div>
-            )
-          )}
+            ) : (
+              selectedMovieSlugs.length === 1 && (
+                // 1
+                <div className="text-lg">
+                  ...is also{" "}
+                  <span className="text-orange-300 font-bold">
+                    {selectedMovieSlugs.length}
+                  </span>{" "}
+                  of the favorites of:
+                </div>
+              )
+            ))}
         </>
       )}
 
       {!loadingUsers &&
         selectedMovieSlugs.length > 0 &&
         movies.length > 0 &&
-        (users.length > 0 ? (
+        (blocked ? (
+          <div className="text-center">
+            <div className="italic text-lg text-red-300 mb-1">
+              Couldn&apos;t load results.
+            </div>
+
+            <div className="mb-3 text-sm text-red-300">
+              Letterboxd is currently blocking this lookup.
+              <br />
+              You can still see the matches directly:
+            </div>
+
+            <a
+              href={`https://letterboxd.com/search/${movieSlugsQuery}/`}
+              target="_blank"
+              className="inline-block py-1 px-3 rounded bg-apple-900 hover:bg-apple-800 text-apple-100"
+            >
+              View results on Letterboxd &rarr;
+            </a>
+          </div>
+        ) : users.length > 0 ? (
           <UserSearchResults users={users} />
         ) : (
           <div className="text-center">

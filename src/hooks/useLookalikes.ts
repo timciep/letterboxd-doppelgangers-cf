@@ -10,15 +10,18 @@ export const useLookalikes = ({
 }): {
   users: UserResult[];
   loadingUsers: boolean;
+  blocked: boolean;
 } => {
   const [users, setUsers] = useState<UserResult[]>([]);
   const [loadingUsers, setLoadingUsers] = useState<boolean>(false);
+  const [blocked, setBlocked] = useState<boolean>(false);
 
   const fetchCache = useMemo(() => new Map<string, UserResult[]>(), []);
 
   const fetchUsers = useCallback(
     async (movieSlugs: string[]) => {
       setLoadingUsers(true);
+      setBlocked(false);
 
       // If we've already fetched these users, don't do it again.
       const cacheKey = movieSlugs.sort().join(",");
@@ -34,21 +37,23 @@ export const useLookalikes = ({
           `/api/letterboxd_fans_by_movies?movies=${movieSlugs.join(",")}&username=${username}`,
         );
       } catch (error) {
-        alert(
-          `API error. Perhaps Letterboxd is down or has started blocking these requests.`,
-        );
+        // Network error or Letterboxd blocked the request. Fall back to a
+        // click-through link instead of showing a misleading "Nobody!".
         console.error(error);
+        setUsers([]);
+        setBlocked(true);
         setLoadingUsers(false);
         return;
       }
 
       if (!response.ok) {
-        alert(
-          `API error. Perhaps Letterboxd is down or has started blocking these requests.`,
-        );
+        // Letterboxd blocked or errored the request. Fall back to a
+        // click-through link instead of showing a misleading "Nobody!".
         console.error(
           `Failed to fetch fans: ${response.status} ${response.statusText}`,
         );
+        setUsers([]);
+        setBlocked(true);
         setLoadingUsers(false);
         return;
       }
@@ -76,5 +81,5 @@ export const useLookalikes = ({
     }
   }, [selectedMovieSlugs, fetchUsers]);
 
-  return { users, loadingUsers };
+  return { users, loadingUsers, blocked };
 };
